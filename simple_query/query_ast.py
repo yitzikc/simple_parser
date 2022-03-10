@@ -110,8 +110,10 @@ class QueryAst:
             raise NameError(f"No such field '{name_node.id}'")
         converted_value = value_converter(value)
 
-        # TODO: Catch ValueError
-        op = self._convert_rel_op(ast_op, node)
+        try:
+            op = self._convert_rel_op(ast_op, node)
+        except (ValueError, TypeError) as e:
+            raise e.__class__(f"Failed to apply converter to field '{name_node.id}'" )from e
         return Comparison(op, name_node.id, converted_value)
 
     @classmethod
