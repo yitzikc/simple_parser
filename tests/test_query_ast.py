@@ -68,6 +68,12 @@ def test_single_comparison():
     assert QueryAst("count == - -1",    CONVERTERS).ast == Comparison(operator.eq, "count", 1)
     return
 
+def test_undefined_field():
+    'Test that we get a name error when using an undefinef field name'
+    with pytest.raises(NameError) as ne:
+        QueryAst("volume ge 7.5", CONVERTERS)
+        assert ne.value.message == "No such field 'volume'"
+
 def test_logical_at_default_precedence():
     q = QueryAst("date eq '2019-08-18' AND count lt 20", CONVERTERS)
     assert q.ast == LogicalOperator(operator.and_,(
